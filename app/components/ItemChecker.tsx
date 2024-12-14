@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { fetchStats, findStatId, extractValue } from '../utils/stats';
+import { fetchStats, findStatId, extractValue, StatOption } from '../utils/stats';
 import { ITEM_CLASS_MAP } from '../constants/itemTypes';
 import type { ParsedItem } from '../types/item';
 

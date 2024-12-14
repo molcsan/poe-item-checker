@@ -1,6 +1,6 @@
 import Fuse from 'fuse.js';
 
-interface StatOption {
+export interface StatOption {
   id: string;
   text: string;
   type: string;
@@ -41,23 +41,25 @@ export async function fetchStats(): Promise<StatOption[]> {
       }))
     );
 
-    fuseInstance = new Fuse(statsCache, {
-      keys: ['text'],
-      includeScore: true,
-      threshold: 0.3,
-      distance: 100,
-      ignoreLocation: true,
-      useExtendedSearch: true,
-      getFn: (obj, path) => {
-        const value = obj[path as keyof StatOption];
-        if (path === 'text') {
-          return normalizeStatText(value as string);
+    if (statsCache) {
+      fuseInstance = new Fuse(statsCache!, {
+        keys: ['text'],
+        includeScore: true,
+        threshold: 0.3,
+        distance: 100,
+        ignoreLocation: true,
+        useExtendedSearch: true,
+        getFn: (obj, path) => {
+          const value = obj[path as keyof StatOption];
+          if (path === 'text') {
+            return normalizeStatText(value as string);
+          }
+          return '';
         }
-        return value;
-      }
-    });
+      });
+    }
 
-    return statsCache;
+    return statsCache ?? [];
   } catch (error) {
     console.error('Failed to fetch stats:', error);
     return [];
@@ -89,7 +91,7 @@ export function findStatId(statText: string, stats: StatOption[]): string | null
         if (path === 'text') {
           return normalizeStatText(value as string);
         }
-        return value;
+        return '';
       }
     });
   }
