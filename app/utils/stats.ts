@@ -4,15 +4,24 @@ interface StatOption {
   id: string;
   text: string;
   type: string;
-  option?: {
-    [key: string]: any;
-  };
+  option?: Record<string, unknown>;
+}
+
+interface StatEntry {
+  id: string;
+  text: string;
+  option?: Record<string, unknown>;
+}
+
+interface StatGroup {
+  label: string;
+  entries: StatEntry[];
 }
 
 let statsCache: StatOption[] | null = null;
 let fuseInstance: Fuse<StatOption> | null = null;
 
-export async function fetchStats() {
+export async function fetchStats(): Promise<StatOption[]> {
   if (statsCache) return statsCache;
 
   try {
@@ -23,8 +32,8 @@ export async function fetchStats() {
       throw new Error(data.error);
     }
 
-    statsCache = data.result.flatMap((group: any) =>
-      group.entries.map((entry: any) => ({
+    statsCache = data.result.flatMap((group: StatGroup) =>
+      group.entries.map((entry: StatEntry) => ({
         id: entry.id,
         text: entry.text,
         type: group.label,

@@ -2,17 +2,17 @@
 import { useState, useEffect } from 'react';
 import { fetchStats, findStatId, extractValue } from '../utils/stats';
 import { ITEM_CLASS_MAP } from '../constants/itemTypes';
-import type { ParsedItem, SearchQuery } from '../types/item';
+import type { ParsedItem } from '../types/item';
 
 export default function ItemChecker() {
   const [itemText, setItemText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState<any[]>([]);
+  const [stats, setStats] = useState<StatOption[]>([]);
 
   useEffect(() => {
-    fetchStats().then(stats => {
-      setStats(stats);
+    fetchStats().then(fetchedStats => {
+      setStats(fetchedStats || []);
     });
   }, []);
 
