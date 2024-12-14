@@ -11,9 +11,16 @@ export default function ItemChecker() {
   const [stats, setStats] = useState<StatOption[]>([]);
 
   useEffect(() => {
-    fetchStats().then(fetchedStats => {
-      setStats(fetchedStats || []);
-    });
+    const loadStats = async () => {
+      try {
+        const fetchedStats = await fetchStats();
+        setStats(fetchedStats);
+      } catch (error) {
+        setError('Failed to load item stats database');
+        console.error('Failed to load stats:', error);
+      }
+    };
+    loadStats();
   }, []);
 
   const parseItemText = (text: string): ParsedItem => {
@@ -84,17 +91,21 @@ export default function ItemChecker() {
               filters: parsedItem.stats
                 .map(stat => {
                   const statId = findStatId(stat, stats);
-                  const value = extractValue(stat);
+                  if (!statId) {
+                    console.log('No stat ID found for:', stat);
+                    return null;
+                  }
 
-                  if (!statId) return null;
+                  const value = extractValue(stat);
+                  console.log('Found stat:', { id: statId, value, originalStat: stat });
 
                   return {
                     id: statId,
-                    disabled: false,
-                    value: { min: value }
+                    value: { min: value },
+                    disabled: false
                   };
                 })
-                .filter(Boolean),
+                .filter((filter): filter is NonNullable<typeof filter> => filter !== null),
               disabled: false
             }],
             filters: {

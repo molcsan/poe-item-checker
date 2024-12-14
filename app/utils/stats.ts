@@ -22,8 +22,6 @@ let statsCache: StatOption[] | null = null;
 let fuseInstance: Fuse<StatOption> | null = null;
 
 export async function fetchStats(): Promise<StatOption[]> {
-  if (statsCache) return statsCache;
-
   try {
     const response = await fetch('/api/poe/stats');
     const data = await response.json();
@@ -32,7 +30,10 @@ export async function fetchStats(): Promise<StatOption[]> {
       throw new Error(data.error);
     }
 
-    statsCache = data.result.flatMap((group: StatGroup) =>
+    console.log('First few stat groups:', data.result.slice(0, 2));
+    console.log('Sample entries:', data.result[0]?.entries.slice(0, 2));
+
+    const processedStats = data.result.flatMap((group: StatGroup) =>
       group.entries.map((entry: StatEntry) => ({
         id: entry.id,
         text: entry.text,
@@ -41,71 +42,70 @@ export async function fetchStats(): Promise<StatOption[]> {
       }))
     );
 
-    if (statsCache) {
-      fuseInstance = new Fuse(statsCache!, {
-        keys: ['text'],
-        includeScore: true,
-        threshold: 0.3,
-        distance: 100,
-        ignoreLocation: true,
-        useExtendedSearch: true,
-        getFn: (obj, path) => {
-          const value = obj[path as keyof StatOption];
-          if (path === 'text') {
-            return normalizeStatText(value as string);
-          }
-          return '';
-        }
-      });
-    }
-
-    return statsCache ?? [];
-  } catch (error) {
-    console.error('Failed to fetch stats:', error);
-    return [];
-  }
-}
-
-function normalizeStatText(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[+-]?\d+\.?\d*/g, '#')
-    .replace(/\s+/g, ' ')
-    .replace(/^adds /, '')
-    .replace(/^grants /, '')
-    .replace(/^has /, '')
-    .trim();
-}
-
-export function findStatId(statText: string, stats: StatOption[]): string | null {
-  if (!fuseInstance) {
-    fuseInstance = new Fuse(stats, {
+    statsCache = processedStats;
+    fuseInstance = new Fuse(processedStats, {
       keys: ['text'],
       includeScore: true,
-      threshold: 0.3,
-      distance: 100,
+      threshold: 0.7,
+      distance: 300,
       ignoreLocation: true,
+      minMatchCharLength: 2,
       useExtendedSearch: true,
       getFn: (obj, path) => {
         const value = obj[path as keyof StatOption];
         if (path === 'text') {
           return normalizeStatText(value as string);
         }
-        return '';
+        return value ? String(value) : '';
       }
     });
+
+    return processedStats;
+  } catch (error) {
+    console.error('Failed to fetch stats:', error);
+    throw error;
+  }
+}
+
+function normalizeStatText(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/\+(?=\d)/g, '')
+    .replace(/\[|\]/g, '')
+    .replace(/\|.*?(?=\s|$)/g, '')
+    .replace(/[+-]?\d+\.?\d*/g, '#')
+    .replace(/\s+/g, ' ')
+    .replace(/^adds /, '')
+    .replace(/^gain /, '')
+    .replace(/^you /, '')
+    .trim();
+}
+
+export function findStatId(statText: string, _stats: StatOption[]): string | null {
+  if (!statsCache || !fuseInstance) {
+    console.error('Stats cache or Fuse instance not initialized');
+    return null;
   }
 
   const normalizedInput = normalizeStatText(statText);
+
+  // First try exact match after normalization
+  const exactMatch = statsCache.find(s =>
+    normalizeStatText(s.text) === normalizedInput
+  );
+
+  if (exactMatch) {
+    console.log('Found exact match:', {
+      input: normalizedInput,
+      match: exactMatch.text,
+      id: exactMatch.id
+    });
+    return exactMatch.id;
+  }
+
   const results = fuseInstance.search(normalizedInput);
 
-  // Log search results for debugging
-  console.log('Fuzzy search results for:', statText);
-  results.slice(0, 3).forEach(result => {
-    console.log(`Score: ${result.score}, Text: ${result.item.text}`);
-  });
-
-  if (results.length > 0 && results[0].score && results[0].score < 0.3) {
+  if (results.length > 0 && results[0].score && results[0].score < 0.8) {
     return results[0].item.id;
   }
 
