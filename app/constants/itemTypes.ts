@@ -2,12 +2,12 @@ export const ITEM_CLASS_MAP: Record<string, string> = {
   'Sceptres': 'weapon.sceptre',
   'Wands': 'weapon.wand',
   'Staves': 'weapon.staff',
-  'One Hand Axes': 'weapon.axe.1h',
-  'Two Hand Axes': 'weapon.axe.2h',
-  'One Hand Maces': 'weapon.mace.1h',
-  'Two Hand Maces': 'weapon.mace.2h',
-  'One Hand Swords': 'weapon.sword.1h',
-  'Two Hand Swords': 'weapon.sword.2h',
+  'One Hand Axes': 'weapon.oneaxe',
+  'Two Hand Axes': 'weapon.twoaxe',
+  'One Hand Maces': 'weapon.onemace',
+  'Two Hand Maces': 'weapon.twomace',
+  'One Hand Swords': 'weapon.onesword',
+  'Two Hand Swords': 'weapon.twosword',
   'Thrusting One Hand Swords': 'weapon.sword.thrusting.1h',
   'Bows': 'weapon.bow',
   'Claws': 'weapon.claw',
@@ -23,4 +23,4 @@ export const ITEM_CLASS_MAP: Record<string, string> = {
   'Amulets': 'accessory.amulet',
   'Rings': 'accessory.ring',
   'Belts': 'accessory.belt'
-}; 
+};
