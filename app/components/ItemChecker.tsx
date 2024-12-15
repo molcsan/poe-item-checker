@@ -92,42 +92,59 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
         return;
       }
 
-      let query;
+      // Create base query structure
+      const baseQuery = {
+        query: {
+          status: { option: "online" },
+          stats: [{ type: "and", filters: [], disabled: false }]
+        },
+        sort: { price: "asc" }
+      };
 
+      // Build the query based on item type
+      let query;
       if (parsedItem.rarity === 'Unique' && parsedItem.name && parsedItem.baseType) {
         query = {
+          ...baseQuery,
           query: {
-            status: { option: "online" },
+            ...baseQuery.query,
             name: parsedItem.name,
-            type: parsedItem.baseType,
-            stats: [{ type: "and", filters: [], disabled: false }]
-          },
-          sort: { price: "asc" }
+            type: parsedItem.baseType
+          }
         };
       } else {
+        const statFilters = parsedItem.stats
+          .map(stat => {
+            const statId = findStatId(stat, stats);
+            if (!statId) {
+              console.log('No stat ID found for:', stat);
+              return null;
+            }
+
+            const value = extractValue(stat);
+            console.log('Found stat:', { id: statId, value, originalStat: stat });
+
+            return {
+              id: statId,
+              value: { min: value },
+              disabled: false
+            };
+          })
+          .filter((filter): filter is NonNullable<typeof filter> => filter !== null);
+
+        if (statFilters.length === 0) {
+          setError('No valid stats found to search for');
+          setLoading(false);
+          return;
+        }
+
         query = {
+          ...baseQuery,
           query: {
-            status: { option: "online" },
+            ...baseQuery.query,
             stats: [{
               type: "and",
-              filters: parsedItem.stats
-                .map(stat => {
-                  const statId = findStatId(stat, stats);
-                  if (!statId) {
-                    console.log('No stat ID found for:', stat);
-                    return null;
-                  }
-
-                  const value = extractValue(stat);
-                  console.log('Found stat:', { id: statId, value, originalStat: stat });
-
-                  return {
-                    id: statId,
-                    value: { min: value },
-                    disabled: false
-                  };
-                })
-                .filter((filter): filter is NonNullable<typeof filter> => filter !== null),
+              filters: statFilters,
               disabled: false
             }],
             filters: {
@@ -136,18 +153,18 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
                   category: parsedItem.itemClass ? {
                     option: ITEM_CLASS_MAP[parsedItem.itemClass]
                   } : undefined,
-                  ilvl: parsedItem.itemLevel ? {
+                  ilvl: parsedItem.itemLevel && includeItemLevel ? {
                     min: parsedItem.itemLevel
                   } : undefined
                 },
                 disabled: false
               }
             }
-          },
-          sort: { price: "asc" }
+          }
         };
       }
 
+      // Clean up undefined values
       if (!parsedItem.itemClass) {
         delete query.query.filters?.type_filters.filters.category;
       }
@@ -160,22 +177,24 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...query, league }),
+        body: JSON.stringify({ query, league }),
       });
 
       if (!response.ok) {
-        throw new Error('Search failed');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Search failed');
       }
 
       const data = await response.json();
 
       if (data.id) {
-        window.open(`https://www.pathofexile.com/trade2/search/Standard/${data.id}`, '_blank');
+        window.open(`https://www.pathofexile.com/trade2/search/${league}/${data.id}`, '_blank');
       } else {
         throw new Error('No search ID returned');
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'An error occurred');
+      console.error('Search error:', error);
     } finally {
       setLoading(false);
     }
