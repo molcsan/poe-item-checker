@@ -8,6 +8,8 @@ interface ItemCheckerProps {
   league: string;
 }
 
+const RATE_LIMIT_DELAY = 1000;
+
 export default function ItemChecker({ league }: ItemCheckerProps) {
   const [itemText, setItemText] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -184,6 +186,8 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
       if (!parsedItem.itemLevel || !includeItemLevel) {
         delete query.query.filters?.type_filters.filters.ilvl;
       }
+
+      await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY));
 
       const response = await fetch('/api/poe/search', {
         method: 'POST',

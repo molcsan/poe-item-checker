@@ -10,6 +10,8 @@ export async function POST(request: Request) {
         'Content-Type': 'application/json',
         'User-Agent': 'OAuth poe-item-checker/1.0.0 (contact: sanzodown@hotmail.fr)',
         'Accept': 'application/json',
+        'Origin': 'https://www.pathofexile.com',
+        'Referer': 'https://www.pathofexile.com/trade',
       },
       body: JSON.stringify(body.query),
     });
