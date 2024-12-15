@@ -28,8 +28,28 @@ export default function Home() {
 
         <ItemChecker league={selectedLeague} />
 
-        <div className="text-center text-sm text-white/60 backdrop-blur-sm bg-white/5 rounded-lg p-3">
-          Paste your Path of Exile 2 item stats and click search to check prices on PoE Trade
+        <div className="backdrop-blur-sm bg-white/5 rounded-xl p-6 space-y-4">
+          <div className="space-y-3">
+            <h2 className="text-lg font-medium text-white/90 text-center">How to Use</h2>
+            <ol className="text-white/70 space-y-2 list-decimal list-inside">
+              <li className="flex items-center gap-2">
+                <span className="text-cyan-400">1.</span>
+                Copy an item from Path of Exile (Ctrl+C while hovering over an item)
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-cyan-400">2.</span>
+                Paste it into the item checker textbox below
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-cyan-400">3.</span>
+                Toggle whether you want to include item level in the search
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-cyan-400">4.</span>
+                Click "Search on PoE Trade" to open the official trade site
+              </li>
+            </ol>
+          </div>
         </div>
 
         <footer className="text-center">
