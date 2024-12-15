@@ -85,6 +85,13 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
 
     try {
       const parsedItem = parseItemText(itemText);
+
+      if (parsedItem.itemClass && !ITEM_CLASS_MAP[parsedItem.itemClass]) {
+        setError(`Item type "${parsedItem.itemClass}" is not supported yet`);
+        setLoading(false);
+        return;
+      }
+
       let query;
 
       if (parsedItem.rarity === 'Unique' && parsedItem.name && parsedItem.baseType) {

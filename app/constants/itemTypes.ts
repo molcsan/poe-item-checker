@@ -25,4 +25,7 @@ export const ITEM_CLASS_MAP: Record<string, string> = {
   'Belts': 'accessory.belt',
   'Crossbows': 'weapon.crossbow',
   'Flails': 'weapon.flail',
+  'Jewels': 'jewel',
+  'Life Flasks': 'flask.life',
+  'Mana Flasks': 'flask.mana',
 };
