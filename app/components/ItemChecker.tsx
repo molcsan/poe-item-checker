@@ -109,7 +109,20 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
           query: {
             ...baseQuery.query,
             name: parsedItem.name,
-            type: parsedItem.baseType
+            type: parsedItem.baseType,
+            filters: {
+              type_filters: {
+                filters: {
+                  category: parsedItem.itemClass ? {
+                    option: ITEM_CLASS_MAP[parsedItem.itemClass]
+                  } : undefined,
+                  ilvl: parsedItem.itemLevel && includeItemLevel ? {
+                    min: parsedItem.itemLevel
+                  } : undefined
+                },
+                disabled: false
+              }
+            }
           }
         };
       } else {
