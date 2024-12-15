@@ -2,6 +2,9 @@
 
 A sleek web application for Path of Exile2 players to instantly check item prices on the official trade site.
 
+![{CD731C93-1D1A-4931-9410-C173B434B235}](https://github.com/user-attachments/assets/51b0176f-5ff2-44b2-947a-9c0ec7ac0b29)
+
+
 ## ✨ Features
 
 - **Instant Item Parsing**: Simply copy and paste your item from Path of Exile
