@@ -22,5 +22,7 @@ export const ITEM_CLASS_MAP: Record<string, string> = {
   'Quivers': 'armour.quiver',
   'Amulets': 'accessory.amulet',
   'Rings': 'accessory.ring',
-  'Belts': 'accessory.belt'
+  'Belts': 'accessory.belt',
+  'Crossbows': 'weapon.crossbow',
+  'Flails': 'weapon.flail',
 };
