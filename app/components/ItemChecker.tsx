@@ -9,6 +9,7 @@ export default function ItemChecker() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState<StatOption[]>([]);
+  const [includeItemLevel, setIncludeItemLevel] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -129,7 +130,7 @@ export default function ItemChecker() {
       if (!parsedItem.itemClass) {
         delete query.query.filters?.type_filters.filters.category;
       }
-      if (!parsedItem.itemLevel) {
+      if (!parsedItem.itemLevel || !includeItemLevel) {
         delete query.query.filters?.type_filters.filters.ilvl;
       }
 
@@ -221,6 +222,32 @@ export default function ItemChecker() {
           {error}
         </div>
       )}
+
+      <div className="flex items-center justify-center gap-3 text-white/80">
+        <label htmlFor="includeItemLevel" className="text-sm select-none">
+          Include item level in search
+        </label>
+        <button
+          role="switch"
+          id="includeItemLevel"
+          aria-checked={includeItemLevel}
+          onClick={() => setIncludeItemLevel(!includeItemLevel)}
+          className={`
+            relative inline-flex h-6 w-11 items-center rounded-full
+            transition-colors duration-200 ease-in-out
+            focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2
+            ${includeItemLevel ? 'bg-gradient-to-r from-blue-600 to-cyan-600' : 'bg-white/10'}
+          `}
+        >
+          <span
+            className={`
+              ${includeItemLevel ? 'translate-x-6' : 'translate-x-1'}
+              inline-block h-4 w-4 transform rounded-full
+              bg-white transition duration-200 ease-in-out
+            `}
+          />
+        </button>
+      </div>
 
       <button
         className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-cyan-600
