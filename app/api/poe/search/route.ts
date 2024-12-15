@@ -4,16 +4,14 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    console.log('Search query:', JSON.stringify(body, null, 2)); // Log the search query
-
     const response = await fetch(`https://www.pathofexile.com/api/trade2/search/${body.league}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'PoE Item Checker',
+        'User-Agent': 'OAuth poe-item-checker/1.0.0 (contact: sanzodown@hotmail.fr)',
         'Accept': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(body.query),
     });
 
     if (!response.ok) {

@@ -4,7 +4,7 @@ export async function GET() {
   try {
     const response = await fetch('https://www.pathofexile.com/api/trade2/data/stats', {
       headers: {
-        'User-Agent': 'PoE Item Checker',
+        'User-Agent': 'OAuth poe-item-checker/1.0.0 (contact: sanzodown@hotmail.fr)',
         'Accept': 'application/json',
       },
     });
