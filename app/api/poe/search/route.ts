@@ -6,7 +6,7 @@ export async function POST(request: Request) {
 
     console.log('Search query:', JSON.stringify(body, null, 2)); // Log the search query
 
-    const response = await fetch('https://www.pathofexile.com/api/trade2/search/Standard', {
+    const response = await fetch(`https://www.pathofexile.com/api/trade2/search/${body.league}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

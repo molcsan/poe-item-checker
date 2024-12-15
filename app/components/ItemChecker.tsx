@@ -4,7 +4,11 @@ import { fetchStats, findStatId, extractValue, StatOption } from '../utils/stats
 import { ITEM_CLASS_MAP } from '../constants/itemTypes';
 import type { ParsedItem } from '../types/item';
 
-export default function ItemChecker() {
+interface ItemCheckerProps {
+  league: string;
+}
+
+export default function ItemChecker({ league }: ItemCheckerProps) {
   const [itemText, setItemText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -139,7 +143,7 @@ export default function ItemChecker() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(query),
+        body: JSON.stringify({ ...query, league }),
       });
 
       if (!response.ok) {
