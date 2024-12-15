@@ -46,17 +46,43 @@ export async function POST(request: Request) {
       }
     });
 
-    // Handle rate limit exceeded
-    if (response.status === 429) {
-      const retryAfter = parseInt(response.headers.get('Retry-After') || '10');
+    if (!response.ok) {
+      if (response.status === 429) {
+        const retryAfter = parseInt(response.headers.get('Retry-After') || '10');
+        return NextResponse.json({
+          error: 'Rate limit exceeded',
+          details: `Please wait ${retryAfter} seconds`,
+          retryAfter
+        }, { status: 429 });
+      }
+
+      if (response.status === 403) {
+        console.error('API Access Forbidden:', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        return NextResponse.json({
+          error: 'API Access Forbidden',
+          details: 'The PoE Trade API is currently blocking requests from this service. Please try using the official trade site directly.',
+        }, { status: 403 });
+      }
+
       return NextResponse.json({
-        error: 'Rate limit exceeded',
-        details: `Please wait ${retryAfter} seconds`,
-        retryAfter
-      }, { status: 429 });
+        error: `API Error: ${response.status}`,
+        details: response.statusText
+      }, { status: response.status });
     }
 
     const data = await response.json();
+    if (!data.id) {
+      console.error('Invalid API Response:', data);
+      return NextResponse.json({
+        error: 'Invalid API Response',
+        details: 'The API response did not contain a search ID'
+      }, { status: 500 });
+    }
+
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error with trade search:', error);
