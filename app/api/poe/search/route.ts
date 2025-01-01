@@ -20,6 +20,11 @@ let rateLimitState: RateLimitState = {
   lastReset: Date.now()
 };
 
+// Get the base URL for POE API requests
+function getBaseUrl(): string {
+  return process.env.POE_PROXY_URL || 'https://www.pathofexile.com';
+}
+
 function getRateLimitStatus(): string {
   return rateLimitState.tiers.map((tier, index) => {
     const remaining = tier.max - tier.hits;
@@ -81,7 +86,8 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const response = await fetch(`https://www.pathofexile.com/api/trade2/search/${body.league}`, {
+    const baseUrl = getBaseUrl();
+    const response = await fetch(`${baseUrl}/api/trade2/search/${body.league}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
