@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { GeistSans, GeistMono } from "geist/font";
 import "./globals.css";
 import { Analytics } from '@vercel/analytics/react';
+import { GoogleAdsense } from "./components/GoogleAdsense";
 
 export const metadata: Metadata = {
   title: "PoE2 Item Checker | Fast Path of Exile Price Checking Tool",
@@ -46,6 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}>
+        <GoogleAdsense clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID ?? ''} />
         {children}
         <Analytics mode="production" debug={false} />
       </body>
