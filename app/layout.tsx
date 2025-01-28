@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   keywords: "Path of Exile 2, PoE2, item price checker, PoE trade, item pricing tool, Path of Exile trading",
   authors: [{ name: "Pewpewlazer" }],
   metadataBase: new URL('https://poe-item-check.vercel.app'),
+  other: {
+    'google-adsense-account': 'ca-pub-1887082899126861'
+  },
   openGraph: {
     title: "PoE2 Item Checker | Fast Path of Exile Price Checking Tool",
     description: "Instantly check Path of Exile 2 item prices with our advanced item parser. Free, fast, and accurate.",
