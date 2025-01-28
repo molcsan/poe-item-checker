@@ -12,26 +12,24 @@ export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
   return (
     <>
       <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
-        strategy="afterInteractive"
-      />
-      <Script
         id="gtag-init"
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];
-            window.gtag = function gtag(){dataLayer.push(arguments);}
+            function gtag(){dataLayer.push(arguments);}
             gtag('consent', 'default', {
               'ad_storage': 'denied',
               'analytics_storage': 'denied'
             });
             gtag('js', new Date());
-            gtag('config', '${measurementId}', {
-              page_path: window.location.pathname,
-            });
+            gtag('config', '${measurementId}');
           `,
         }}
+      />
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
+        strategy="afterInteractive"
       />
     </>
   );

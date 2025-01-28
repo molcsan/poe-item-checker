@@ -6,32 +6,29 @@ import { GoogleAnalytics } from "./GoogleAnalytics";
 import { CookieConsent } from "./CookieConsent";
 import { Footer } from "./Footer";
 
-function updateConsent(consent: 'granted' | 'denied') {
-  if (typeof window !== 'undefined' && window.gtag) {
-    try {
-      window.gtag('consent', 'update', {
-        'ad_storage': consent,
-        'analytics_storage': consent
-      });
-    } catch (error) {
-      console.error('Failed to update consent:', error);
-    }
-  }
-}
-
 export function Providers({ children }: { children: React.ReactNode }) {
   function handleAcceptCookies() {
-    updateConsent('granted');
+    if (typeof window !== 'undefined') {
+      (window as Window).gtag('consent', 'update', {
+        'ad_storage': 'granted',
+        'analytics_storage': 'granted'
+      });
+    }
   }
 
   function handleDeclineCookies() {
-    updateConsent('denied');
+    if (typeof window !== 'undefined') {
+      (window as Window).gtag('consent', 'update', {
+        'ad_storage': 'denied',
+        'analytics_storage': 'denied'
+      });
+    }
   }
 
   return (
     <>
-      <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? ''} />
       <GoogleAdsense clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID ?? ''} />
+      <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? ''} />
       <div className="flex-1">
         {children}
       </div>

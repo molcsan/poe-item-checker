@@ -15,11 +15,13 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [includeItemLevel, setIncludeItemLevel] = useState(false);
+  const [isStatsLoaded, setIsStatsLoaded] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
       try {
         await fetchStats();
+        setIsStatsLoaded(true);
       } catch (error) {
         setError('Failed to load item stats database');
         console.error('Failed to load stats:', error);
@@ -77,6 +79,11 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
   const handleSearch = async () => {
     if (!itemText.trim()) {
       setError('Please paste an item first');
+      return;
+    }
+
+    if (!isStatsLoaded) {
+      setError('Item stats database is not ready yet. Please try again in a moment.');
       return;
     }
 

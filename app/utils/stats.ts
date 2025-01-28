@@ -20,9 +20,22 @@ interface StatGroup {
 
 let statsCache: StatOption[] | null = null;
 let fuseInstance: Fuse<StatOption> | null = null;
+let lastFetchAttempt = 0;
+const CACHE_RETRY_INTERVAL = 60000;
 
 export async function fetchStats(): Promise<StatOption[]> {
+  const now = Date.now();
+
+  if (now - lastFetchAttempt < CACHE_RETRY_INTERVAL && !statsCache) {
+    throw new Error('Stats cache is unavailable. Please try again later.');
+  }
+
+  if (statsCache && fuseInstance) {
+    return statsCache;
+  }
+
   try {
+    lastFetchAttempt = now;
     const response = await fetch('/api/poe/stats');
     const data = await response.json();
 
@@ -30,8 +43,9 @@ export async function fetchStats(): Promise<StatOption[]> {
       throw new Error(data.error);
     }
 
-    console.log('First few stat groups:', data.result.slice(0, 2));
-    console.log('Sample entries:', data.result[0]?.entries.slice(0, 2));
+    if (!data.result || !Array.isArray(data.result)) {
+      throw new Error('Invalid stats data received from API');
+    }
 
     const processedStats = data.result.flatMap((group: StatGroup) =>
       group.entries.map((entry: StatEntry) => ({
@@ -41,6 +55,10 @@ export async function fetchStats(): Promise<StatOption[]> {
         option: entry.option
       }))
     );
+
+    if (processedStats.length === 0) {
+      throw new Error('No stats data received from API');
+    }
 
     statsCache = processedStats;
     fuseInstance = new Fuse(processedStats, {
@@ -63,6 +81,8 @@ export async function fetchStats(): Promise<StatOption[]> {
     return processedStats;
   } catch (error) {
     console.error('Failed to fetch stats:', error);
+    statsCache = null;
+    fuseInstance = null;
     throw error;
   }
 }
@@ -83,7 +103,7 @@ function normalizeStatText(text: string): string {
 
 export function findStatId(statText: string): string | null {
   if (!statsCache || !fuseInstance) {
-    console.error('Stats cache or Fuse instance not initialized');
+    console.error('Stats cache is not initialized');
     return null;
   }
 
