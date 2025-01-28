@@ -36,7 +36,15 @@ export async function fetchStats(): Promise<StatOption[]> {
 
   try {
     lastFetchAttempt = now;
-    const response = await fetch('/api/poe/stats');
+    const response = await fetch('/api/poe/stats', {
+      next: { revalidate: CACHE_RETRY_INTERVAL / 1000 },
+      cache: 'force-cache',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch stats: ${response.status}`);
+    }
+
     const data = await response.json();
 
     if (data.error) {
