@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { fetchStats, findStatId, extractValue, StatOption } from '../utils/stats';
+import { fetchStats, findStatId, extractValue } from '../utils/stats';
 import { ITEM_CLASS_MAP } from '../constants/itemTypes';
 import type { ParsedItem } from '../types/item';
 
@@ -14,14 +14,12 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
   const [itemText, setItemText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState<StatOption[]>([]);
   const [includeItemLevel, setIncludeItemLevel] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const fetchedStats = await fetchStats();
-        setStats(fetchedStats);
+        await fetchStats();
       } catch (error) {
         setError('Failed to load item stats database');
         console.error('Failed to load stats:', error);
@@ -34,7 +32,7 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
     const lines = text.split('\n').map(line => line.trim()).filter(Boolean);
     let itemClass: string | undefined;
     let itemLevel: number | undefined;
-    let stats: string[] = [];
+    const stats: string[] = [];
     let rarity: string | undefined;
     let name: string | undefined;
     let baseType: string | undefined;
@@ -130,7 +128,7 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
       } else {
         const statFilters = parsedItem.stats
           .map(stat => {
-            const statId = findStatId(stat, stats);
+            const statId = findStatId(stat);
             if (!statId) {
               console.log('No stat ID found for:', stat);
               return null;

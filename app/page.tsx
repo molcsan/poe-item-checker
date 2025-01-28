@@ -46,7 +46,7 @@ export default function Home() {
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-cyan-400">4.</span>
-                Click "Search on PoE Trade" to open the official trade site
+                Click &quot;Search on PoE Trade&quot; to open the official trade site
               </li>
             </ol>
           </div>
