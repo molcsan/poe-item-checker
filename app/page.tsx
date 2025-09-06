@@ -13,10 +13,10 @@ export default function Home() {
       <main className="relative max-w-2xl mx-auto space-y-8">
         <div className="space-y-4 text-center">
           <h1 className="text-6xl font-black bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 bg-clip-text text-transparent drop-shadow-lg">
-            Pewpewlazer&apos;s
+            PoE2 Item Checker
           </h1>
           <p className="text-2xl font-medium text-white/80">
-            PoE2 Item Checker
+            This product isn't affiliated with or endorsed by Grinding Gear Games in any way.
           </p>
           <div className="h-[1px] w-24 mx-auto bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
         </div>
