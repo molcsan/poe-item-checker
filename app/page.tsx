@@ -16,7 +16,7 @@ export default function Home() {
             PoE2 Item Checker
           </h1>
           <p className="text-2xl font-medium text-white/80">
-            This product isn't affiliated with or endorsed by Grinding Gear Games in any way.
+            This product isn&lsquo;t affiliated with or endorsed by Grinding Gear Games in any way.
           </p>
           <div className="h-[1px] w-24 mx-auto bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
         </div>
