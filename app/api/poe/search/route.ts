@@ -91,7 +91,7 @@ export async function POST(request: Request) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'OAuth poe-item-checker/1.0.0 (contact: sanzodown@hotmail.fr)',
+        'User-Agent': 'OAuth molcsan/poe-item-checker/1.0.0 (contact: p.molcsan@gmail.com)',
         'Accept': '*/*',
       },
       body: JSON.stringify(body.query),
